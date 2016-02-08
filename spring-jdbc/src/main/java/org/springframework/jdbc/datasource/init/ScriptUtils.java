@@ -16,6 +16,7 @@
 
 package org.springframework.jdbc.datasource.init;
 
+import com.voipfuture.springtest.jdbc.SQLStatementSplitter;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.sql.Connection;
@@ -431,7 +432,7 @@ public abstract class ScriptUtils {
 
 			String script;
 			try {
-				script = readScript(resource, commentPrefix, separator);
+				script = SQLStatementSplitter.parseFile( resource.getReader() ); 
 			}
 			catch (IOException ex) {
 				throw new CannotReadScriptException(resource, ex);
@@ -444,9 +445,7 @@ public abstract class ScriptUtils {
 				separator = FALLBACK_STATEMENT_SEPARATOR;
 			}
 
-			List<String> statements = new LinkedList<String>();
-			splitSqlScript(resource, script, separator, commentPrefix, blockCommentStartDelimiter,
-					blockCommentEndDelimiter, statements);
+			List<String> statements = new SQLStatementSplitter().parse( script ); 
 
 			int stmtNumber = 0;
 			Statement stmt = connection.createStatement();
